@@ -82,46 +82,43 @@ export default function SalesLeads() {
 
   // Update Lead
   const handleUpdate = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+  try {
+    await api.put(`/leads/${editLead.id}`, editData);
 
     if (editData.status === "converted") {
       setShowConvertModal(true);
-      return;
-    }
-
-    try {
-      await api.put(`/leads/${editLead.id}`, editData);
+    } else {
       closeEditModal();
       fetchLeads();
       alert("Lead updated successfully!");
-    } catch (err) {
-      console.error(err.response?.data || err.message);
-      alert("Error updating lead");
     }
-  };
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    alert("Error updating lead");
+  }
+};
 
   // Convert Lead to Customer
-  const handleConvert = async () => {
-    try {
-      await api.put(`/leads/${editLead.id}`, { status: "converted" });
+ const handleConvert = async () => {
+  try {
+    await api.post("/customer", {
+      lead_id: editLead.id,
+      company,
+      address,
+    });
 
-      await api.post("/customer", {
-        lead_id: editLead.id,
-        company,
-        address,
-      });
-
-      setShowConvertModal(false);
-      closeEditModal();
-      fetchLeads();
-      setCompany("");
-      setAddress("");
-      alert("Lead converted & customer created!");
-    } catch (err) {
-      console.error(err.response?.data || err.message);
-      alert("Error converting lead");
-    }
-  };
+    setShowConvertModal(false);
+    closeEditModal();
+    fetchLeads();
+    setCompany("");
+    setAddress("");
+    alert("Lead converted & customer created!");
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    alert("Error converting lead");
+  }
+};
 
   // Delete Lead
   const handleDelete = async (id) => {
