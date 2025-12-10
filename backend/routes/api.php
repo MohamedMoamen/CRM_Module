@@ -49,6 +49,16 @@ Route::middleware(['auth:sanctum', EnsureSales::class])->group(function () {
     Route::put('/leads/{id}', [LeadController::class, 'update']);
     Route::delete('/leads/{id}', [LeadController::class, 'destroy']);
 
-    //CRUD Customers
+    //Create Customer when convert status of lead into converted
     Route::post('/customer', [CustomerController::class, 'store']);
+});
+
+
+//Admin And Sales Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/customers', [CustomerController::class, 'index']);
+    Route::get('/customers/{id}', [CustomerController::class, 'show']);
+    Route::post('/newcustomer', [CustomerController::class, 'new']);
+    Route::put('/customers/{id}', [CustomerController::class, 'update']);
+    Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
 });

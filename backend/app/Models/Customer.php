@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    protected $fillable=['name','email','phone','company','address','status','assigned_to'];
+    protected $fillable=['name','email','phone','company','address','status','assigned_to','lead_id'];
 
      public function assignedTo()
     {
