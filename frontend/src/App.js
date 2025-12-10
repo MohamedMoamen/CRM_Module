@@ -8,6 +8,7 @@ import SalesCustomers from './pages/Sales/SalesCustomers';
 import SalesDeals from './pages/Sales/SalesDeals';
 import AdminLeads from './pages/Admin/AdminLeads';
 import AdminCustomers from './pages/Admin/AdminCustomers';
+import AdminDeals from './pages/Admin/AdminDeals';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/admin/support" element={<SupportUsers />} />
                 <Route path="/admin/leads" element={<AdminLeads />} />
                 <Route path="/admin/customers" element={<AdminCustomers />} />
+                <Route path="/admin/deals" element={<AdminDeals />} />
                 {/* Sales Pages */}
                 <Route path="/sales/leads" element={<SalesLeads />} />
                 <Route path="/sales/customers" element={<SalesCustomers />} />

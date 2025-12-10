@@ -37,6 +37,7 @@ export default function AdminNavbar() {
                 <NavLink to="/admin/support" style={linkStyle}>Support Users</NavLink>
                 <NavLink to="/admin/leads" style={linkStyle}>Leads</NavLink>
                 <NavLink to="/admin/customers" style={linkStyle}>Customers</NavLink>
+                <NavLink to="/admin/deals" style={linkStyle}>Deals</NavLink>
             </nav>
 
             <button 

@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdminDealsController;
 use App\Http\Controllers\AdminLeadController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\SalesDealsController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureSales;
@@ -37,7 +39,14 @@ Route::middleware(['auth:sanctum',EnsureAdmin::class])->group(function() {
     Route::put('/admin/leads/{id}', [AdminLeadController::class, 'update']);
     Route::delete('/admin/leads/{id}', [AdminLeadController::class, 'destroy']);
     // Assign lead to sales user
-    Route::post('/admin/leads/{id}/assign', [AdminLeadController::class, 'assignLead']);   
+    Route::post('/admin/leads/{id}/assign', [AdminLeadController::class, 'assignLead']); 
+    
+    //CRUD Deals
+    Route::get('admin/deals', [AdminDealsController::class, 'index']);
+    Route::get('admin/deals/{id}', [AdminDealsController::class, 'show']);
+    Route::post('admin/deals', [AdminDealsController::class, 'store']);
+    Route::put('admin/deals/{id}', [AdminDealsController::class, 'update']);
+    Route::delete('admin/deals/{id}', [AdminDealsController::class, 'destroy']);
 });
 
 //Sales Routes
@@ -51,6 +60,12 @@ Route::middleware(['auth:sanctum', EnsureSales::class])->group(function () {
 
     //Create Customer when convert status of lead into converted
     Route::post('/customer', [CustomerController::class, 'store']);
+
+    //CRU Deals
+    Route::get('sales/deals', [SalesDealsController::class, 'index']);
+    Route::get('sales/deals/{id}', [SalesDealsController::class, 'show']);
+    Route::post('sales/deals', [SalesDealsController::class, 'store']);
+    Route::put('sales/deals/{id}', [SalesDealsController::class, 'update']); // stage only
 });
 
 
