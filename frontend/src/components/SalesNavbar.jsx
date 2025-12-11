@@ -32,11 +32,11 @@ export default function SalesNavbar() {
         }}>
             
             <nav style={{ display: "flex", gap: "20px" }}>
+                <NavLink to="/sales/dashboard" style={linkStyle}>Dashboard</NavLink>
                 <NavLink to="/sales/leads" style={linkStyle}>Leads</NavLink>
                 <NavLink to="/sales/customers" style={linkStyle}>Customers</NavLink>
                 <NavLink to="/sales/deals" style={linkStyle}>Deals</NavLink>
                 <NavLink to="/sales/tickets" style={linkStyle}>Tickets</NavLink>
-                <NavLink to="/sales/communications" style={linkStyle}>Communications</NavLink>
             </nav>
 
             <button 

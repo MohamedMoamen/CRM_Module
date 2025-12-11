@@ -21,8 +21,8 @@ export default function Login() {
             setToken(token);
 
             if (user.role === 'admin') navigate('/admin/dashboard');
-            else if (user.role === 'sales') navigate('/sales/leads');
-            else if (user.role === 'support') navigate('/support/tickets');
+            else if (user.role === 'sales') navigate('/sales/dashboard');
+            else if (user.role === 'support') navigate('/support/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed');
         }  finally {

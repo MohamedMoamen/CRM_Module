@@ -33,6 +33,7 @@ export default function SupportNavbar() {
         }}>
             
             <nav style={{ display: "flex", gap: "20px" }}>
+                <NavLink to="/support/dashboard" style={linkStyle}>Dashboard</NavLink>
                 <NavLink to="/support/tickets" style={linkStyle}>Tickets</NavLink>
             </nav>
 

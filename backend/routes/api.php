@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminDealsController;
 use App\Http\Controllers\AdminLeadController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\SalesDealsController;
 use App\Http\Controllers\TicketController;
@@ -22,6 +23,9 @@ Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'lo
 
 //Admin Routes
 Route::middleware(['auth:sanctum',EnsureAdmin::class])->group(function() {
+    //Dashboard
+    Route::get('/admin/dashboard', [DashboardController::class, 'admindashboard']);
+    
     // CRUD Sales
     Route::get('admin/sales', [UserController::class, 'sales']);
     Route::post('admin/sales', [UserController::class, 'storeSales']);
@@ -52,6 +56,9 @@ Route::middleware(['auth:sanctum',EnsureAdmin::class])->group(function() {
 
 //Sales Routes
 Route::middleware(['auth:sanctum', EnsureSales::class])->group(function () { 
+    //Dashboard
+    Route::get('/sales/dashboard', [DashboardController::class, 'salesdashboard']);
+    
     //CRUD Leads
     Route::get('/leads', [LeadController::class, 'index']);
     Route::post('/leads', [LeadController::class, 'store']);
@@ -66,7 +73,7 @@ Route::middleware(['auth:sanctum', EnsureSales::class])->group(function () {
     Route::get('sales/deals', [SalesDealsController::class, 'index']);
     Route::get('sales/deals/{id}', [SalesDealsController::class, 'show']);
     Route::post('sales/deals', [SalesDealsController::class, 'store']);
-    Route::put('sales/deals/{id}', [SalesDealsController::class, 'update']); // stage only
+    Route::put('sales/deals/{id}', [SalesDealsController::class, 'update']); 
 });
 
 
@@ -93,3 +100,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy']);
 
 });
+
+//Support Route For Dashboard
+
+Route::middleware(['auth:sanctum'])->get('/support/dashboard', [DashboardController::class, 'supportdashboard']);

@@ -13,6 +13,8 @@ import AdminTickets from './pages/Admin/AdminTickets';
 import TicketDetails from './pages/TicketDetails';
 import SalesTickets from './pages/Sales/SalesTickets';
 import SupportTickets from './pages/Support/SupportTickets';
+import SalesDashboard from './pages/Sales/SalesDashboard';
+import SupportDashboard from './pages/Support/SupportDashboard';
 
 function App() {
     return (
@@ -30,12 +32,15 @@ function App() {
                 <Route path="/admin/tickets" element={<AdminTickets />} />
 
                 {/* Sales Pages */}
+                
+                <Route path="/sales/dashboard" element={<SalesDashboard />} />
                 <Route path="/sales/leads" element={<SalesLeads />} />
                 <Route path="/sales/customers" element={<SalesCustomers />} />
                 <Route path="/sales/deals" element={<SalesDeals />} />
                 <Route path="/sales/tickets" element={<SalesTickets />} />
 
                  {/* Support Pages */}
+                 <Route path="/support/dashboard" element={<SupportDashboard />} />
                  <Route path="/support/tickets" element={<SupportTickets />} />
 
 
