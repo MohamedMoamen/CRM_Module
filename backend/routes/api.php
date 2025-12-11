@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\SalesDealsController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureSales;
@@ -50,7 +51,7 @@ Route::middleware(['auth:sanctum',EnsureAdmin::class])->group(function() {
 });
 
 //Sales Routes
-Route::middleware(['auth:sanctum', EnsureSales::class])->group(function () {
+Route::middleware(['auth:sanctum', EnsureSales::class])->group(function () { 
     //CRUD Leads
     Route::get('/leads', [LeadController::class, 'index']);
     Route::post('/leads', [LeadController::class, 'store']);
@@ -69,11 +70,26 @@ Route::middleware(['auth:sanctum', EnsureSales::class])->group(function () {
 });
 
 
-//Admin And Sales Routes
-Route::middleware('auth:sanctum')->group(function () {
+//Admin , Sales And Support Routes About Customers
+Route::middleware('auth:sanctum')->group(function () { 
     Route::get('/customers', [CustomerController::class, 'index']);
     Route::get('/customers/{id}', [CustomerController::class, 'show']);
     Route::post('/newcustomer', [CustomerController::class, 'new']);
     Route::put('/customers/{id}', [CustomerController::class, 'update']);
     Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
+});
+
+
+//Admin , Sales And Support Routes About Tickets And Users Data
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user', function (Request $request) {
+    return $request->user();
+    });
+
+    Route::get('/tickets', [TicketController::class, 'index']);
+    Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
+    Route::post('/tickets', [TicketController::class, 'store']);
+    Route::put('/tickets/{ticket}', [TicketController::class, 'update']);
+    Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy']);
+
 });

@@ -44,19 +44,20 @@ class CustomerController extends Controller
     //Get Customers
     public function index(Request $request)
     {
-    if ($request->user()->role === 'admin') {
-        // Admin sees all customers
-        return Customer::with('assignedTo')->get()->map(function ($customer) {
-            $customer->assigned_to_name = $customer->assignedTo ? $customer->assignedTo->name : null;
-            return $customer;
-        });
+       $user = $request->user();
+       if ($user->role === 'admin' || $user->role === 'support') {
+        // Admin And Support Users see all customers
+         $customers = Customer::with('assignedTo')->get();
         } else {
         // Sales user sees only their customers
-        return Customer::with('assignedTo')->where('assigned_to', $request->user()->id)->get()->map(function ($customer) {
-            $customer->assigned_to_name = $customer->assignedTo ? $customer->assignedTo->name : null;
-            return $customer;
-        });
+        $customers = Customer::with('assignedTo')
+                               ->where('assigned_to', $user->id)
+                               ->get();
         }
+        return $customers->map(function ($customer) {
+           $customer->assigned_to_name = $customer->assignedTo ? $customer->assignedTo->name : null;
+           return $customer;
+           });
     }
 
 

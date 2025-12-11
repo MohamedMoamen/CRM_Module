@@ -1,7 +1,8 @@
+import React from 'react'
 import { NavLink, useNavigate } from "react-router-dom";
 import api from "../api/api";
 
-export default function SalesNavbar() {
+export default function SupportNavbar() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -32,11 +33,7 @@ export default function SalesNavbar() {
         }}>
             
             <nav style={{ display: "flex", gap: "20px" }}>
-                <NavLink to="/sales/leads" style={linkStyle}>Leads</NavLink>
-                <NavLink to="/sales/customers" style={linkStyle}>Customers</NavLink>
-                <NavLink to="/sales/deals" style={linkStyle}>Deals</NavLink>
-                <NavLink to="/sales/tickets" style={linkStyle}>Tickets</NavLink>
-                <NavLink to="/sales/communications" style={linkStyle}>Communications</NavLink>
+                <NavLink to="/support/tickets" style={linkStyle}>Tickets</NavLink>
             </nav>
 
             <button 
