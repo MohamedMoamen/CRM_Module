@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 
@@ -75,7 +76,19 @@ class TicketController extends Controller
         ]);
 
         if ($user->role === 'admin') {
-            return Ticket::create($data);
+            $ticket = Ticket::create($data);
+
+            Log::create([
+                'user_id'     => $user->id,
+                'user_role'   => $user->role,
+                'action_type' => 'create',
+                'table_name'  => 'tickets',
+                'record_id'   => $ticket->id,
+                'old_data'    => null,
+                'new_data'    => json_encode($ticket->toArray()),
+            ]);
+
+             return $ticket;
         }
 
         if ($user->role === 'sales') {
@@ -83,12 +96,36 @@ class TicketController extends Controller
                 return response()->json(['error' => 'This customer is not yours'], 403);
             }
             $data['assigned_to'] = null;
-            return Ticket::create($data);
+            $ticket = Ticket::create($data);
+
+            Log::create([
+                'user_id'     => $user->id,
+                'user_role'   => $user->role,
+                'action_type' => 'create',
+                'table_name'  => 'tickets',
+                'record_id'   => $ticket->id,
+                'old_data'    => null,
+                'new_data'    => json_encode($ticket->toArray()),
+            ]);
+
+             return $ticket;
         }
 
         if ($user->role === 'support') {
             $data['assigned_to'] = $user->id;
-            return Ticket::create($data);
+            $ticket = Ticket::create($data);
+
+            Log::create([
+                'user_id'     => $user->id,
+                'user_role'   => $user->role,
+                'action_type' => 'create',
+                'table_name'  => 'tickets',
+                'record_id'   => $ticket->id,
+                'old_data'    => null,
+                'new_data'    => json_encode($ticket->toArray()),
+            ]);
+
+             return $ticket;
         }
 
         return response()->json(['error' => 'Not allowed'], 403);
@@ -113,7 +150,19 @@ class TicketController extends Controller
             unset($data['assigned_to']);
         }
 
+        $oldData = $ticket->toArray();
+
         $ticket->update($data);
+
+        Log::create([
+         'user_id'     => $user->id,
+         'user_role'   => $user->role,
+         'action_type' => 'update',
+         'table_name'  => 'tickets',
+         'record_id'   => $ticket->id,
+         'old_data'    => json_encode($oldData),
+         'new_data'    => json_encode($ticket->fresh()->toArray()),
+       ]);
 
         return $ticket->load(['customer', 'assignedTo']);
     }
@@ -124,6 +173,18 @@ class TicketController extends Controller
         if ($request->user()->role !== 'admin') {
             return response()->json(['error' => 'Not allowed'], 403);
         }
+
+        $oldData = $ticket->toArray();
+
+        Log::create([
+          'user_id'     => $request->user()->id,
+          'user_role'   => $request->user()->role,
+          'action_type' => 'delete',
+          'table_name'  => 'tickets',
+          'record_id'   => $ticket->id,
+          'old_data'    => json_encode($oldData),
+          'new_data'    => null,
+         ]);
 
         $ticket->delete();
 

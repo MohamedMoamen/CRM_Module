@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Deal;
+use App\Models\Log;
 use Illuminate\Http\Request;
 
 class SalesDealsController extends Controller
@@ -53,6 +54,17 @@ class SalesDealsController extends Controller
 
         $deal = Deal::create($request->only(['customer_id','amount','stage','expected_close_date']));
 
+        Log::create([
+         'user_id'     => $request->user()->id,
+         'user_role'   => $request->user()->role,
+         'action_type' => 'create',
+         'table_name'  => 'deals',
+         'record_id'   => $deal->id,
+         'old_data'    => null,
+         'new_data'    => json_encode($deal->toArray()),
+        ]);
+
+
         return response()->json($deal, 201);
     }
 
@@ -65,11 +77,25 @@ class SalesDealsController extends Controller
             ->whereHas('customer', fn($q) => $q->where('assigned_to', $userId))
             ->firstOrFail();
 
+        $oldData = $deal->toArray();
+
+
         $request->validate([
             'stage' => 'required|in:new,negotiation,won,lost',
         ]);
 
         $deal->update(['stage' => $request->stage]);
+
+        Log::create([
+         'user_id'     => $request->user()->id,
+         'user_role'   => $request->user()->role,
+         'action_type' => 'update',
+         'table_name'  => 'deals',
+         'record_id'   => $deal->id,
+         'old_data'    => json_encode($oldData),
+         'new_data'    => json_encode($deal->fresh()->toArray()),
+        ]);
+
 
         return response()->json($deal);
     }

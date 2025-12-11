@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deal;
+use App\Models\Log;
 use Illuminate\Http\Request;
 
 class AdminDealsController extends Controller
@@ -32,6 +33,15 @@ class AdminDealsController extends Controller
         ]);
 
         $deal = Deal::create($request->only(['customer_id','amount','stage','expected_close_date']));
+        Log::create([
+          'user_id' => $request->user()?->id,
+          'user_role' => $request->user()?->role,
+          'action_type' => 'create',
+          'table_name' => 'deals',
+          'record_id' => $deal->id,
+          'old_data' => null,
+          'new_data' => json_encode($deal->toArray()),
+         ]);
 
         return response()->json($deal, 201);
     }
@@ -48,15 +58,37 @@ class AdminDealsController extends Controller
             'expected_close_date' => 'nullable|date',
         ]);
 
+        $oldData = $deal->toArray();
         $deal->update($request->only(['customer_id','amount','stage','expected_close_date']));
+
+        Log::create([
+           'user_id' => $request->user()?->id,
+           'user_role' => $request->user()?->role,
+           'action_type' => 'update',
+           'table_name' => 'deals',
+           'record_id' => $deal->id,
+           'old_data' => json_encode($oldData),
+           'new_data' => json_encode($deal->toArray()),
+            ]);
 
         return response()->json($deal);
     }
 
     // Delete deal
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         $deal = Deal::findOrFail($id);
+        $oldData = $deal->toArray();
+        
+        Log::create([
+         'user_id' => $request->user()?->id,
+         'user_role' => $request->user()?->role,
+         'action_type' => 'delete',
+         'table_name' => 'deals',
+         'record_id' => $deal->id,
+         'old_data' => json_encode($oldData),
+         'new_data' => null,
+        ]);
         $deal->delete();
 
         return response()->json(['message' => 'Deal deleted successfully']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -37,6 +38,17 @@ class UserController extends Controller
 
     $user = $this->handleStore($request->all(), 'sales');
 
+    Log::create([
+    'user_id'     => $request->user()->id,
+    'user_role'   => $request->user()->role,
+    'action_type' => 'create',
+    'table_name'  => 'users',
+    'record_id'   => $user->id,
+    'old_data'    => null,
+    'new_data'    => json_encode($user->toArray()),
+    ]);
+
+
     return response()->json(['message'=>'Sales created','user'=>$user]);
     }
 
@@ -59,8 +71,20 @@ class UserController extends Controller
         } else {
             unset($data['password']); 
         }
+        
+        $oldData=$user->toArray();
 
         $user->update($data);
+
+        Log::create([
+          'user_id'     => $request->user()->id,
+          'user_role'   => $request->user()->role,
+          'action_type' => 'update',
+          'table_name'  => 'users',
+          'record_id'   => $user->id,
+          'old_data'    => json_encode($oldData),
+          'new_data'    => json_encode($user->fresh()->toArray()),
+        ]);
     
         return response()->json([
             'message' => 'Sales updated successfully',
@@ -69,9 +93,23 @@ class UserController extends Controller
     }
        
        //Delete Sales User
-    public function destroySales($id)
+    public function destroySales(Request $request, $id)
     {
       $user = $this->getUserByRole($id, 'sales');
+
+      $oldData = $user->toArray();
+
+     Log::create([
+       'user_id'     => $request->user()->id,
+       'user_role'   => $request->user()->role,
+       'action_type' => 'delete',
+       'table_name'  => 'users',
+       'record_id'   => $user->id,
+       'old_data'    => json_encode($oldData),
+       'new_data'    => null,
+     ]);
+
+
       $user->delete();
 
       return response()->json([
@@ -100,6 +138,16 @@ class UserController extends Controller
 
        $user = $this->handleStore($request->all(), 'support');
 
+       Log::create([
+         'user_id'     => $request->user()->id,
+         'user_role'   => $request->user()->role,
+         'action_type' => 'create',
+         'table_name'  => 'users',
+         'record_id'   => $user->id,
+         'old_data'    => null,
+         'new_data'    => json_encode($user->toArray()),
+        ]);
+
        return response()->json(['message'=>'Support created','user'=>$user]);
     }
 
@@ -115,6 +163,8 @@ class UserController extends Controller
            'phone' => 'sometimes|numeric|unique:users,phone,' . $user->id,
        ]);
 
+       $oldData=$user->toArray();
+
         $data = $request->only(['name', 'email', 'phone', 'password']);
 
         if ($request->filled('password')) {
@@ -124,6 +174,15 @@ class UserController extends Controller
         }
 
         $user->update($data);
+        Log::create([
+          'user_id'     => $request->user()->id,
+          'user_role'   => $request->user()->role,
+          'action_type' => 'update',
+          'table_name'  => 'users',
+          'record_id'   => $user->id,
+          'old_data'    => json_encode($oldData),
+          'new_data'    => json_encode($user->fresh()->toArray()),
+        ]);
     
         return response()->json([
             'message' => 'Sales updated successfully',
@@ -132,9 +191,22 @@ class UserController extends Controller
     }
 
       //Delete Support User
-    public function destroySupport($id)
+    public function destroySupport(Request $request,$id)
     {
       $user = $this->getUserByRole($id, 'support');
+
+      $oldData = $user->toArray();
+
+      Log::create([
+          'user_id'     => $request->user()->id,
+          'user_role'   => $request->user()->role,
+          'action_type' => 'delete',
+          'table_name'  => 'users',
+          'record_id'   => $user->id,
+          'old_data'    => json_encode($oldData),
+          'new_data'    => null,
+      ]);
+
       $user->delete();
 
       return response()->json([

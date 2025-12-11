@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\SalesDealsController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
@@ -52,6 +53,11 @@ Route::middleware(['auth:sanctum',EnsureAdmin::class])->group(function() {
     Route::post('admin/deals', [AdminDealsController::class, 'store']);
     Route::put('admin/deals/{id}', [AdminDealsController::class, 'update']);
     Route::delete('admin/deals/{id}', [AdminDealsController::class, 'destroy']);
+
+    //Get Logs
+    Route::get('/logs', [LogController::class, 'index']);
+    Route::get('/logs/{id}', [LogController::class, 'show']);
+
 });
 
 //Sales Routes

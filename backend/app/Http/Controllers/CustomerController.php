@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Lead;
+use App\Models\Log;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -11,6 +12,8 @@ class CustomerController extends Controller
     //Create Customer When Lead's Status become converted
     public function store(Request $request)
     {
+        $user = $request->user();
+
         $validated = $request->validate([
             'lead_id' => 'required|exists:leads,id',
             'company' => 'nullable|string',
@@ -33,6 +36,17 @@ class CustomerController extends Controller
             'assigned_to' => $lead->assigned_to,
             'lead_id'     => $lead->id
         ]);
+
+        Log::create([
+         'user_id'     => $user->id,
+         'user_role'   => $user->role,
+         'action_type' => 'create',
+         'table_name'  => 'customers',
+         'record_id'   => $customer->id,
+         'old_data'    => null,
+         'new_data'    => json_encode($customer->toArray()),
+          ]);
+
 
         return response()->json([
             'message' => 'Customer created successfully',
@@ -61,7 +75,7 @@ class CustomerController extends Controller
     }
 
 
-    //Show Dedicated Customer
+    //Show Specific Customer
      public function show(Request $request, $id)
     {
         $customer = Customer::findOrFail($id);
@@ -76,6 +90,8 @@ class CustomerController extends Controller
     //Create A New Customer
     public function new(Request $request)
     {
+        $user = $request->user();
+
         $request->validate([
             "name" => "required|string",
             "email" => "nullable|email",
@@ -96,12 +112,25 @@ class CustomerController extends Controller
             "assigned_to" => $assignedTo,
         ]);
 
+        Log::create([
+         'user_id'     => $user->id,
+         'user_role'   => $user->role,
+         'action_type' => 'create',
+         'table_name'  => 'customers',
+         'record_id'   => $customer->id,
+         'old_data'    => null,
+         'new_data'    => json_encode($customer->toArray()),
+         ]);
+
+
         return response()->json($customer, 201);
     }
 
     //Update Customer
     public function update(Request $request, $id)
    {
+       $user = $request->user();
+
      if ($request->has('assigned_to')) {
         $request->merge([
             'assigned_to' => $request->assigned_to === "" ? null : (int) $request->assigned_to
@@ -119,6 +148,8 @@ class CustomerController extends Controller
 
     $customer = Customer::findOrFail($id);
 
+    $oldData = $customer->toArray();
+
     if ($request->user()->role !== 'admin' && $customer->assigned_to !== $request->user()->id) {
         return response()->json(['message' => 'Unauthorized'], 403);
     }
@@ -126,6 +157,17 @@ class CustomerController extends Controller
     $data = $request->only(['name', 'email', 'phone', 'company', 'address', 'assigned_to', 'status']);
 
     $customer->update($data);
+
+    Log::create([
+    'user_id'     => $user->id,
+    'user_role'   => $user->role,
+    'action_type' => 'update',
+    'table_name'  => 'customers',
+    'record_id'   => $customer->id,
+    'old_data'    => json_encode($oldData),
+    'new_data'    => json_encode($customer->fresh()->toArray()),
+     ]);
+
 
     if ($customer->lead_id) {
         $lead = Lead::find($customer->lead_id);
@@ -144,6 +186,8 @@ class CustomerController extends Controller
     //Delete Customer
     public function destroy(Request $request, $id)
     {
+        $user = $request->user();
+
         $customer = Customer::findOrFail($id);
 
         if ($request->user()->role !== 'admin' && $customer->assigned_to !== $request->user()->id) {
@@ -153,7 +197,22 @@ class CustomerController extends Controller
         $lead = Lead::where('id', $customer->lead_id)->first();
         if ($lead) $lead->delete();
 
+        $oldData = $customer->toArray();
+
+
+
+        Log::create([
+          'user_id'     => $user->id,
+          'user_role'   => $user->role,
+          'action_type' => 'delete',
+          'table_name'  => 'customers',
+          'record_id'   => $customer->id,
+          'old_data'    => json_encode($oldData),
+          'new_data'    => null,
+         ]);
+
         $customer->delete();
+
 
         return response()->json(['message' => 'Customer deleted']);
     }

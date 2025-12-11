@@ -31,14 +31,92 @@ export default function Login() {
     };
 
     return (
-        <div>
-            <h2>Login</h2>
-            {error && <p style={{color:'red'}}>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required />
-                <button type="submit" disabled={loading}>Login</button>
-            </form>
+        <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+              backgroundColor: "#f5f5f5"
+            }}
+          >
+            <div
+             style={{
+                backgroundColor: "white",
+                padding: "40px",
+                borderRadius: "8px",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                width: "350px",
+                textAlign: "center"
+              }}
+            >
+              <h2 style={{ marginBottom: "30px" }}>Login</h2>
+
+              {error && <p style={{ color: "red", marginBottom: "15px" }}>{error}</p>}
+
+              <form onSubmit={handleSubmit} style={{ width:"100%",display: "flex", flexDirection: "column", gap: "15px" }}>
+                <div style={{ textAlign: "left" }}>
+                  <label htmlFor="email" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter Your Email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  />
+                </div>
+
+                <div style={{ textAlign: "left" }}>
+                  <label htmlFor="password" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    placeholder="Enter Your Password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    marginTop: "10px",
+                    padding: "10px",
+                    borderRadius: "4px",
+                    border: "none",
+                    backgroundColor: "#2196F3",
+                    color: "white",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    width:"100%"
+                  }}
+                >
+                  {loading ? "Logging in..." : "Login"}
+                </button>
+              </form>
+            </div>
         </div>
+
     );
 }

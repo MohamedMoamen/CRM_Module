@@ -30,7 +30,6 @@ export default function AdminCustomers() {
     status: "",
     assigned_to: "",
   });
-      console.log("Assigned to:", editData.assigned_to, typeof editData.assigned_to);
 
 
   const [showAddModal, setShowAddModal] = useState(false);

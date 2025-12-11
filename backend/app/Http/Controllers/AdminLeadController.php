@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
+use App\Models\Log;
 use Illuminate\Http\Request;
 
 class AdminLeadController extends Controller
@@ -46,6 +47,16 @@ class AdminLeadController extends Controller
         "status" => "new",
         "assigned_to" => $request->assigned_to,
     ]);
+    Log::create([
+    'user_id' => $request->user()?->id,
+    'user_role' => $request->user()?->role,
+    'action_type' => 'create',
+    'table_name' => 'leads',
+    'record_id' => $lead->id,
+    'old_data' => null,
+    'new_data' =>  json_encode($lead->toArray()),
+     ]);
+
 
     return $lead->load('assignedTo');
     }
@@ -65,8 +76,21 @@ class AdminLeadController extends Controller
     ]);
 
     $lead = Lead::findOrFail($id);
+   
+    $oldData = $lead->toArray();
 
     $lead->update($request->only(['name','email','phone','source','assigned_to']));
+
+    Log::create([
+    'user_id' => $request->user()?->id,
+    'user_role' => $request->user()?->role,
+    'action_type' => 'update',
+    'table_name' => 'leads',
+    'record_id' => $lead->id,
+    'old_data' =>  json_encode($oldData),
+    'new_data' =>  json_encode($lead->toArray()),
+    ]);
+
 
 
      return response()->json([
@@ -76,9 +100,21 @@ class AdminLeadController extends Controller
     }
 
     //Delete A Lead
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-    Lead::findOrFail($id)->delete();
+    $lead = Lead::findOrFail($id);
+    $oldData = $lead->toArray();
+    
+    Log::create([
+    'user_id' => $request->user()?->id,
+    'user_role' => $request->user()?->role,
+    'action_type' => 'delete',
+    'table_name' => 'leads',
+    'record_id' => $lead->id,
+    'old_data' =>  json_encode($oldData),
+    'new_data' => null,
+     ]);
+     $lead->delete();
 
     return response()->json(['message' => 'Lead deleted']);
     }
